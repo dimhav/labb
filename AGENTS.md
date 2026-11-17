@@ -47,19 +47,32 @@ sa metadata maste aterskapas. Steg:
 ## Dela / overlamna projektet
 
 `.env` ar gitignorerad (innehaller losenord + secret key). `.env.example` ar
-mallen. For att skicka projektet till en annan OpenHands-anvandare:
+mallen, och `./start.sh` skapar `.env` automatiskt vid forsta korningen.
+
+Tva paket skapas i `/workspace` (utanfor projektet, sa de inte hamnar i repot):
 
 ```bash
-git archive --format=tar.gz --prefix=pgsqlmesh/ -o pgsqlmesh.tar.gz HEAD   # kod, utan .env
-git bundle create pgsqlmesh.bundle --all                                  # med git-historik
+# zip med .git - packas upp, redan ett repo, kor start.sh
+cd /tmp && cp -a project pgsqlmesh && (cd pgsqlmesh && rm -f .env)
+zip -r -y /workspace/pgsqlmesh-repo.zip pgsqlmesh
+
+# bundle - en fil som klonas direkt, behaller historiken
+git bundle create /workspace/pgsqlmesh.bundle --all
 ```
 
-Mottagaren (i OpenHands): ladda upp/klona, kor `cp .env.example .env` och
-`docker compose up -d --build`. Ett `git bundle` kan klonas direkt:
-`git clone pgsqlmesh.bundle pgsqlmesh`.
+Mottagaren (i OpenHands):
 
-For att publicera i ett Git-repo: lagg till en remote och pusha. Pusha aldrig
-`.env` - den ar redan ignorerad, men kontrollera `git status` fore push.
+```bash
+# alternativ 1: zip
+unzip pgsqlmesh-repo.zip && cd pgsqlmesh && ./start.sh
+
+# alternativ 2: bundle
+git clone pgsqlmesh.bundle pgsqlmesh && cd pgsqlmesh && ./start.sh
+```
+
+`./start.sh` skapar `.env`, rensar skalvariabler som overskuggar `.env`, och
+kor `docker compose up -d --build`. For att publicera i ett Git-repo: lagg till
+en remote och pusha. Pusha aldrig `.env`.
 
 ## Uppdateringsflodet
 
