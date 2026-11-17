@@ -9,3 +9,7 @@ version-manager/.state/
 
 # Riktiga hemligheter - delas aldrig. Se .env.example.
 .env
+
+# Nedladdningsbara paket - skapas lokalt, skall inte versionshanteras.
+*.zip
+*.bundle
