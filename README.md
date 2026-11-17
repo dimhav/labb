@@ -39,15 +39,35 @@ Gränssnittet följer Havs- och vattenmyndighetens grafiska profil:
 
 ## Kom igang
 
+Snabbast:
+
 ```bash
+./start.sh
+```
+
+Skriptet skapar `.env` (fran `.env.example`) om den saknas, rensar
+versionsvariabler ur skalet och startar hela stacken.
+
+Manuellt, motsvarande:
+
+```bash
+cp .env.example .env          # .env ar gitignorerad - skapas lokalt
+unset POSTGRES_IMAGE SQLMESH_VERSION SUPERSET_IMAGE   # skalet overskuggar .env
 docker compose up -d --build
 ```
 
 Tjansterna startar i ordning: Postgres seedar radata, SQLMesh bygger
-modellerna, Superset skapar dataset och en dashboard.
+modellerna, Superset skapar dataset och en dashboard. Forsta gangen tar
+nagra minuter (images byggs och dras ner).
 
 * Webbapp (portal): <http://localhost:12000>
 * Superset: <http://localhost:12001> (admin / admin)
+
+Kontrollera att allt ar uppe:
+
+```bash
+docker compose ps
+```
 
 ### Fjarrakomst (utan lokal installation)
 
@@ -57,6 +77,31 @@ Kor stacken i en fjarrserver sa nas webbappen via en publik adress i stallet:
 * Superset: <https://work-2-abcgbfugcnpbijmn.prod-runtime.all-hands.dev/>
 
 Inget behover installeras lokalt - allt kor i containrar pa servern.
+
+## Lämna över till en kollega
+
+Hela projektet är ett git-repo. Skicka det som ett **git bundle** (en enda
+fil som innehåller all kod och hela historiken):
+
+```bash
+git bundle create pgsqlmesh.bundle --all
+```
+
+Kollegan tar emot filen, och i OpenHands:
+
+```bash
+git clone pgsqlmesh.bundle pgsqlmesh
+cd pgsqlmesh
+./start.sh
+```
+
+Klart - portalen är på <http://localhost:12000>.
+
+Alternativt, ladda upp `pgsqlmesh.bundle` till ett Git-repo (GitHub/GitLab/
+Bitbucket) och dela länken. Kollegan klonar som vanligt.
+
+> `.env` följer **inte** med i repot (den är gitignorerad och innehåller
+> lösenord). `./start.sh` skapar den från `.env.example` vid första körningen.
 
 ## Versioner
 
@@ -107,12 +152,15 @@ granssnittet visar nagot medan skanningen pagar.
 ## Struktur
 
 ```
+start.sh                  snabbstart (skapar .env + startar stacken)
 docker-compose.yml        hela stacken
-.env                      versioner + credentials (single source of truth)
+.env.example              mall for .env (versioner + credentials)
+.env                      skapas lokalt ur .env.example (gitignorerad)
 db/init/                  skapar databaser och seedar raw.*
 sqlmesh/                  modeller (staging -> marts) + entrypoint
 superset/                 config, bootstrap och dashboard-setup
 version-manager/          backend (FastAPI) + frontend (vanilla JS)
+AGENTS.md                 anteckningar for vidareutveckling
 ```
 
 ## Noter
