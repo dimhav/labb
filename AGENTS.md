@@ -79,6 +79,22 @@ ner direkt i OpenHands UI (filbladdraren/VS Code). De ar gitignorerade (`*.zip`,
 `*.bundle`) sa de hamnar inte i repot. Verifiera alltid med `unzip -q` - Python-
 uppackning tappar korbarhetsbiten och ger falska "M"-poster i `git status`.
 
+## Publicera till GitHub
+
+Repot `dimhav/labb` finns och ar publikt/tomt. Branchen
+`add-pgsqlmesh-data-platform` ar redo lokalt med alla commits.
+
+Krav: token maste ha `contents: write`. OpenHands GitHub App-token (`ghu_`) har
+bara `metadata=read` nar appen inte ar installerad pa repot, sa push ger 403
+"Resource not accessible by integration". Installera OpenHands GitHub App pa
+repot (eller anvand en PAT med `repo`-scope) och pusha sedan:
+
+```bash
+git push -u origin add-pgsqlmesh-data-platform
+```
+
+Pusha aldrig direkt till `main`; oppna en PR i stallet.
+
 ## Uppdateringsflodet
 
 `version-manager/app/upgrader.py` skriver ny version till `.env`, bygger om vid
