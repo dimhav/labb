@@ -44,6 +44,23 @@ sa metadata maste aterskapas. Steg:
    Supersets bootstrap kor `superset db upgrade` + skapar dataset/dashboard;
    SQLMesh:s entrypoint bygger om `analytics.*` fran `raw.*`.
 
+## Dela / overlamna projektet
+
+`.env` ar gitignorerad (innehaller losenord + secret key). `.env.example` ar
+mallen. For att skicka projektet till en annan OpenHands-anvandare:
+
+```bash
+git archive --format=tar.gz --prefix=pgsqlmesh/ -o pgsqlmesh.tar.gz HEAD   # kod, utan .env
+git bundle create pgsqlmesh.bundle --all                                  # med git-historik
+```
+
+Mottagaren (i OpenHands): ladda upp/klona, kor `cp .env.example .env` och
+`docker compose up -d --build`. Ett `git bundle` kan klonas direkt:
+`git clone pgsqlmesh.bundle pgsqlmesh`.
+
+For att publicera i ett Git-repo: lagg till en remote och pusha. Pusha aldrig
+`.env` - den ar redan ignorerad, men kontrollera `git status` fore push.
+
 ## Uppdateringsflodet
 
 `version-manager/app/upgrader.py` skriver ny version till `.env`, bygger om vid
