@@ -1,0 +1,507 @@
+/* ===========================================================================
+   pgsqlmesh - grafisk profil
+   Foljer Havs- och vattenmyndighetens grafiska profil:
+     * Fargpalett hamtad fran havet, sjoarna och vattendragen (HEX-varden).
+     * Typografi: TT Norms primart, Arial som fallback.
+     * Mottter: abstraktion av vattnets rorelser (anvands sparsamt i bakgrund).
+     * Tillganglighet: farg ar aldrig enda ledtraden - symbol/text forstarker.
+   =========================================================================== */
+
+:root {
+  /* Profilfarger */
+  --hav-mork-turkos: #005074;
+  --hav-turkos: #005f88;
+  --hav-ljus-turkos: #2280a7;
+  --hav-mork-bla: #092d4b;
+  --hav-bla: #004371;
+  --hav-mork-gron: #004038;
+  --hav-gron: #00594f;
+  --hav-ljus-gron: #3b847b;
+  --hav-mork-orange: #cc340d;
+  --hav-orange: #e84e0f;
+  --hav-ljus-orange: #f3914e;
+  --hav-mork-gul: #af981b;
+  --hav-gul: #d1b738;
+  --hav-ljus-gul: #e8d186;
+  --hav-svart: #000000;
+  --hav-mork-kallgra: #dae3e6;
+  --hav-kallgra: #e9eded;
+  --hav-mork-varmgra: #e3dcd5;
+  --hav-varmgra: #f0ede7;
+
+  /* Semantiska variabler */
+  --bg: var(--hav-varmgra);
+  --surface: #ffffff;
+  --surface-2: var(--hav-kallgra);
+  --border: #cdd8dc;
+  --border-strong: #a9bcc2;
+  --text: var(--hav-mork-bla);
+  --text-soft: #3c5a6b;
+  --muted: #5b7480;
+  --accent: var(--hav-turkos);
+  --accent-dark: var(--hav-mork-turkos);
+  --accent-soft: rgba(0, 95, 136, .10);
+
+  /* Allvarlighetsgrader. Orange/gul anvands i paletten; hog/lag kompletteras
+     med symbol i granssnittet sa att farg inte ar enda ledtraden. */
+  --critical: var(--hav-mork-orange);
+  --high: var(--hav-orange);
+  --medium: var(--hav-mork-gul);
+  --low: var(--hav-ljus-turkos);
+  --ok: var(--hav-gron);
+
+  --radius: 4px;
+  --shadow: 0 2px 8px rgba(9, 45, 75, .10);
+  --shadow-lg: 0 12px 40px rgba(9, 45, 75, .22);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "TT Norms", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  background-color: var(--bg);
+  /* Mottter: abstraktion av vattnets rorelser, mycket sparsamt. */
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(0, 95, 136, .07) 0%, transparent 42%),
+    radial-gradient(circle at 88% 0%, rgba(59, 132, 123, .07) 0%, transparent 40%),
+    repeating-linear-gradient(115deg, rgba(0, 80, 116, .028) 0 2px, transparent 2px 26px);
+  min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+
+a { color: var(--accent-dark); }
+
+/* ---------- Topbar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 28px;
+  background: var(--hav-mork-bla);
+  border-bottom: 4px solid var(--hav-ljus-turkos);
+  color: #fff;
+  flex-wrap: wrap;
+}
+
+.brand { display: flex; align-items: center; gap: 14px; }
+
+/* Grafiskt element: vattenstreck i profilens ande. */
+.logo {
+  display: grid; place-items: center;
+  width: 46px; height: 46px;
+  border-radius: var(--radius);
+  background: var(--hav-turkos);
+  border: 1px solid rgba(255, 255, 255, .35);
+  color: #fff;
+}
+.logo svg { width: 26px; height: 26px; display: block; }
+
+.topbar h1 {
+  margin: 0; font-size: 20px; font-weight: 700;
+  letter-spacing: .2px; color: #fff;
+}
+.subtitle { margin: 1px 0 0; color: var(--hav-mork-kallgra); font-size: 13px; }
+
+.topbar-actions { display: flex; align-items: center; gap: 14px; }
+
+.stack-status { font-size: 12.5px; color: var(--hav-mork-kallgra); }
+.stack-status .dot {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  margin-right: 6px; background: var(--hav-kallgra); vertical-align: middle;
+}
+.stack-status .dot.up { background: var(--hav-ljus-gron); }
+.stack-status .dot.down { background: var(--hav-ljus-orange); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--accent-dark);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.btn:hover { background: var(--surface-2); border-color: var(--accent); }
+.btn:focus-visible { outline: 3px solid var(--hav-ljus-turkos); outline-offset: 2px; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+.btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+.btn-icon { margin-right: 6px; display: inline-block; }
+.btn.spinning .btn-icon { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-upgrade {
+  background: var(--hav-gron);
+  border-color: var(--hav-gron);
+  color: #fff;
+  font-weight: 700;
+}
+.btn-upgrade:hover { background: var(--hav-mork-gron); border-color: var(--hav-mork-gron); }
+.btn-upgrade.danger {
+  background: var(--hav-mork-orange);
+  border-color: var(--hav-mork-orange);
+}
+.btn-upgrade.danger:hover { background: #a82a0a; border-color: #a82a0a; }
+
+/* ---------- Flikar ---------- */
+.tabs {
+  display: flex; gap: 2px; padding: 0 28px; flex-wrap: wrap;
+  background: var(--hav-bla);
+}
+.tab {
+  background: none; border: none; color: var(--hav-mork-kallgra); cursor: pointer;
+  padding: 14px 18px; font: inherit; font-size: 14.5px; font-weight: 500;
+  border-bottom: 4px solid transparent; transition: color .15s, border-color .15s;
+}
+.tab:hover { color: #fff; background: rgba(255, 255, 255, .06); }
+.tab:focus-visible { outline: 3px solid var(--hav-ljus-turkos); outline-offset: -3px; }
+.tab.active { color: #fff; border-bottom-color: var(--hav-ljus-turkos); font-weight: 700; }
+
+/* ---------- Layout ---------- */
+main { max-width: 1180px; margin: 0 auto; padding: 26px 22px 60px; }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.panel-title {
+  font-size: 14px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--accent-dark);
+  margin: 30px 0 12px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.panel-lead { color: var(--text-soft); font-size: 14px; margin: 6px 0 0; max-width: 64ch; }
+
+.security-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.security-head .panel-title { margin-top: 0; }
+
+/* ---------- Pipeline ---------- */
+.pipeline {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; margin-bottom: 26px; flex-wrap: wrap;
+}
+.pipe-node {
+  display: flex; flex-direction: column; align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--hav-ljus-turkos);
+  border-radius: var(--radius);
+  padding: 14px 24px; min-width: 140px;
+  box-shadow: var(--shadow);
+}
+.pipe-node strong { font-size: 14.5px; }
+.pipe-node small { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.pipe-badge {
+  font-size: 11px; font-weight: 700; color: #fff;
+  background: var(--hav-turkos);
+  width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; margin-bottom: 7px;
+}
+.pipe-arrow { color: var(--hav-ljus-turkos); font-size: 22px; }
+
+/* ---------- Tjanstekort ---------- */
+.services { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.service-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 4px solid var(--hav-ljus-turkos);
+  border-radius: var(--radius); padding: 16px;
+  box-shadow: var(--shadow);
+}
+.service-top { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+.service-top strong { font-size: 15.5px; }
+.service-image {
+  font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px;
+  color: var(--muted); margin: 0 0 6px; word-break: break-all;
+}
+.service-state { margin: 0; font-size: 12.5px; color: var(--text-soft); }
+.service-ver {
+  margin-left: auto; font-size: 12px; font-variant-numeric: tabular-nums;
+  color: var(--accent-dark); background: var(--accent-soft);
+  border: 1px solid rgba(0, 95, 136, .25);
+  padding: 2px 9px; border-radius: 999px;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dot.ok { background: var(--ok); }
+.dot.warn { background: var(--medium); }
+.dot.err { background: var(--critical); }
+
+/* ---------- Datalager-statistik ---------- */
+.warehouse { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-top: 4px solid var(--hav-ljus-turkos);
+  border-radius: var(--radius); padding: 18px;
+  display: flex; flex-direction: column; gap: 6px;
+  box-shadow: var(--shadow);
+}
+.stat-num { font-size: 28px; font-weight: 700; letter-spacing: .3px; color: var(--accent-dark); }
+.stat-lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; }
+
+/* ---------- Sammanfattning ---------- */
+.summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--hav-ljus-turkos);
+  border-radius: var(--radius);
+  padding: 18px 22px; margin-bottom: 22px;
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 22px; flex-wrap: wrap;
+}
+.summary p { margin: 0; font-size: 15px; }
+.summary .sev-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.chip {
+  font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px;
+  border: 1px solid transparent;
+}
+.chip.CRITICAL { background: rgba(204, 52, 13, .12); color: #b02d0b; border-color: rgba(204, 52, 13, .45); }
+.chip.HIGH { background: rgba(232, 78, 15, .12); color: #a8350a; border-color: rgba(232, 78, 15, .45); }
+.chip.MEDIUM { background: rgba(175, 152, 27, .16); color: #6f6008; border-color: rgba(175, 152, 27, .5); }
+.chip.LOW { background: rgba(34, 128, 167, .13); color: var(--hav-turkos); border-color: rgba(34, 128, 167, .45); }
+.chip.UNKNOWN { background: rgba(91, 116, 128, .14); color: var(--muted); border-color: rgba(91, 116, 128, .4); }
+.chip.zero { background: rgba(0, 89, 79, .12); color: var(--ok); border-color: rgba(0, 89, 79, .4); }
+
+/* ---------- Kort ---------- */
+.cards { display: flex; flex-direction: column; gap: 20px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 18px; padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  border-top: 4px solid var(--hav-turkos);
+  flex-wrap: wrap;
+}
+.card-title { display: flex; align-items: center; gap: 12px; }
+.card-title h2 { margin: 0; font-size: 18px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card-role { color: var(--text-soft); font-size: 13.5px; margin: 5px 0 0; max-width: 620px; }
+.ver-line { display: flex; align-items: center; gap: 10px; font-size: 14px; flex-wrap: wrap; }
+.ver {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  background: var(--surface-2); color: var(--text);
+  padding: 3px 10px; border-radius: var(--radius); border: 1px solid var(--border-strong);
+}
+.ver.new { color: var(--ok); border-color: rgba(0, 89, 79, .45); background: rgba(0, 89, 79, .08); }
+.arrow { color: var(--muted); }
+
+.badge {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .5px; padding: 3px 10px; border-radius: 999px;
+}
+.badge.ok { background: rgba(0, 89, 79, .12); color: var(--ok); border: 1px solid rgba(0, 89, 79, .4); }
+.badge.update { background: var(--accent-soft); color: var(--accent-dark); border: 1px solid rgba(0, 95, 136, .4); }
+.badge.err { background: rgba(204, 52, 13, .12); color: var(--critical); border: 1px solid rgba(204, 52, 13, .45); }
+.badge.warn { background: rgba(175, 152, 27, .18); color: #6f6008; border: 1px solid rgba(175, 152, 27, .55); }
+
+.card-body { padding: 18px 22px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 26px; }
+@media (max-width: 860px) { .card-body { grid-template-columns: 1fr; } }
+
+.section-label {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .7px; color: var(--muted); margin: 0 0 10px;
+}
+
+/* ---------- Sarbarheter ---------- */
+.findings { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
+.finding {
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  background: var(--surface-2);
+}
+.finding.CRITICAL { border-left-color: var(--critical); }
+.finding.HIGH { border-left-color: var(--high); }
+.finding.MEDIUM { border-left-color: var(--medium); }
+.finding.LOW { border-left-color: var(--low); }
+.finding.UNKNOWN { border-left-color: var(--muted); }
+.finding-top { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.finding-id { font-family: ui-monospace, monospace; font-size: 12.5px; font-weight: 700; }
+.finding-id a { color: var(--accent-dark); text-decoration: none; border-bottom: 1px dotted var(--muted); }
+.finding-id a:hover { color: var(--hav-mork-orange); }
+
+/* Allvarlighetsmarke: farg + symbol + text (aldrig farg enbart). */
+.sev {
+  font-size: 10.5px; font-weight: 700; padding: 2px 8px;
+  border-radius: 999px; text-transform: uppercase; letter-spacing: .4px;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.sev::before { font-size: 11px; }
+.sev.CRITICAL { background: var(--critical); color: #fff; }
+.sev.CRITICAL::before { content: "⛔"; }
+.sev.HIGH { background: #cc4409; color: #fff; }
+.sev.HIGH::before { content: "▲"; }
+.sev.MEDIUM { background: var(--medium); color: #2a2200; }
+.sev.MEDIUM::before { content: "◆"; }
+.sev.LOW { background: var(--hav-mork-turkos); color: #fff; }
+.sev.LOW::before { content: "●"; }
+.sev.UNKNOWN { background: var(--muted); color: #fff; }
+.sev.UNKNOWN::before { content: "?"; }
+
+.score { font-size: 12px; color: var(--muted); margin-left: auto; }
+.finding-summary { margin: 6px 0 0; font-size: 13px; color: var(--text-soft); line-height: 1.5; }
+.finding-fix { margin: 6px 0 0; font-size: 12.5px; color: var(--ok); }
+
+.no-findings {
+  color: var(--ok); font-size: 14px; display: flex; align-items: center; gap: 8px;
+  background: rgba(0, 89, 79, .07); border: 1px solid rgba(0, 89, 79, .3);
+  border-radius: var(--radius); padding: 12px 14px;
+}
+
+/* ---------- Atgardsforslag ---------- */
+.actions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.action {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 13px 15px;
+  background: var(--surface-2);
+}
+.action.critical { border-color: rgba(204, 52, 13, .5); background: rgba(204, 52, 13, .06); }
+.action.high { border-color: rgba(232, 78, 15, .45); background: rgba(232, 78, 15, .05); }
+.action.ok { border-color: rgba(0, 89, 79, .35); background: rgba(0, 89, 79, .05); }
+.action.info { border-style: dashed; background: transparent; }
+.action-title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.action-detail { font-size: 13.5px; color: var(--text-soft); margin: 6px 0 0; line-height: 1.55; }
+.action-cta { margin-top: 12px; }
+
+.residual-note {
+  font-size: 12.5px; color: var(--accent-dark); margin: 0 0 10px;
+  padding: 9px 12px; border-radius: var(--radius);
+  background: var(--accent-soft); border: 1px solid rgba(0, 95, 136, .28);
+}
+.card-error {
+  color: var(--critical); font-size: 13px; background: rgba(204, 52, 13, .07);
+  border: 1px solid rgba(204, 52, 13, .35); border-radius: var(--radius); padding: 10px 13px;
+}
+
+/* ---------- Tomt lage ---------- */
+.empty {
+  text-align: center; color: var(--muted); padding: 60px 20px;
+  border: 1px dashed var(--border-strong); border-radius: var(--radius);
+  background: rgba(255, 255, 255, .5);
+}
+.empty strong { color: var(--text); }
+
+/* ---------- Dialog ---------- */
+.dialog {
+  border: none;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius);
+  padding: 0;
+  width: min(820px, 92vw);
+  box-shadow: var(--shadow-lg);
+}
+.dialog::backdrop { background: rgba(9, 45, 75, .55); }
+.dialog h2 {
+  margin: 0; padding: 16px 20px; font-size: 17px;
+  border-bottom: 1px solid var(--border);
+  border-top: 4px solid var(--hav-turkos);
+  background: var(--surface-2);
+}
+.log {
+  margin: 0; padding: 16px 20px; max-height: 52vh; overflow-y: auto;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12.5px; line-height: 1.65; white-space: pre-wrap;
+  background: var(--hav-mork-bla);
+  color: var(--hav-mork-kallgra);
+}
+.log .ok { color: #7fd1a8; }
+.log .err { color: var(--hav-ljus-orange); }
+.log .warn { color: var(--hav-ljus-gul); }
+.log .cmd { color: #8ec9e0; }
+.dialog-actions { padding: 14px 20px; border-top: 1px solid var(--border); text-align: right; }
+
+.spinner-inline {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid var(--border-strong); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle;
+}
+
+/* ---------- Datatabeller ---------- */
+.data-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.schema-block h3 {
+  margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .7px;
+  color: var(--accent-dark);
+}
+.table-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.table-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 4px solid var(--hav-ljus-gron);
+  border-radius: var(--radius);
+  padding: 12px 15px; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.table-item:hover { border-left-color: var(--hav-turkos); background: var(--surface-2); }
+.table-item:focus-visible { outline: 3px solid var(--hav-ljus-turkos); outline-offset: 2px; }
+.table-name { font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+.table-rows { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* ---------- Tabellvisning ---------- */
+.dialog-wide { width: min(1100px, 94vw); }
+.table-meta { padding: 10px 20px 0; font-size: 12.5px; color: var(--muted); }
+.table-wrap { padding: 12px 20px 4px; max-height: 60vh; overflow: auto; }
+.data-table { border-collapse: collapse; font-size: 12.5px; width: 100%; }
+.data-table th, .data-table td {
+  border: 1px solid var(--border); padding: 6px 10px; text-align: left;
+  white-space: nowrap;
+}
+.data-table th {
+  background: var(--hav-mork-turkos); color: #fff;
+  position: sticky; top: 0; font-weight: 700;
+  font-size: 12px; text-transform: uppercase; letter-spacing: .4px;
+}
+.data-table td { font-family: ui-monospace, Menlo, Consolas, monospace; }
+.data-table tbody tr:nth-child(even) { background: var(--surface-2); }
+.null { color: var(--muted); font-style: italic; }
+
+/* ---------- Superset-info ---------- */
+.superset-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.info-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-top: 4px solid var(--hav-ljus-turkos);
+  border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
+}
+.info-card h3 { margin: 0 0 12px; font-size: 15px; color: var(--accent-dark); }
+.info-card p { margin: 7px 0; font-size: 13.5px; display: flex; justify-content: space-between; gap: 12px; }
+.info-card ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.9; }
+.info-card code {
+  background: var(--surface-2); border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 3px; font-size: 12px;
+}
+.k { color: var(--muted); }
+.muted { color: var(--muted); }
+
+/* ---------- Sidfot ---------- */
+.footer {
+  max-width: 1180px; margin: 0 auto; padding: 20px 22px 40px;
+  border-top: 1px solid var(--border);
+  color: var(--muted); font-size: 12.5px;
+}
+.footer p { margin: 0; max-width: 70ch; }

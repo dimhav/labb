@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.log
+.env.local
+.DS_Store
+version-manager/.state/
+
+# Riktiga hemligheter - delas aldrig. Se .env.example.
+.env

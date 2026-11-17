@@ -1,0 +1,1 @@
+"""pgsqlmesh version-manager."""

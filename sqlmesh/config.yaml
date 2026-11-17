@@ -1,0 +1,24 @@
+# ===========================================================================
+#  SQLMesh-konfiguration.
+#
+#  Gateway "warehouse" pekar pa Postgres. Alla modeller ligger i schemat
+#  analytics. Miljoer: prod (default).
+# ===========================================================================
+gateways:
+  warehouse:
+    connection:
+      type: postgres
+      host: "{{ env_var('POSTGRES_HOST', 'postgres') }}"
+      port: "{{ env_var('POSTGRES_PORT', '5432') | int }}"
+      user: "{{ env_var('POSTGRES_USER', 'warehouse') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD', 'warehouse') }}"
+      database: "{{ env_var('POSTGRES_DB', 'warehouse') }}"
+
+default_gateway: warehouse
+
+model_defaults:
+  dialect: postgres
+  start: 2025-05-01
+  cron: "@hourly"
+
+# Modellerna skapas i analytics-schemat (se models/*.sql).

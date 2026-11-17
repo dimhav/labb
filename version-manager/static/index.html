@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pgsqlmesh - dataplattform</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" role="img">
+        <path d="M3 11c3-3.4 6-3.4 9 0s6 3.4 9 0 5-3.4 8 0"/>
+        <path d="M3 18c3-3.4 6-3.4 9 0s6 3.4 9 0 5-3.4 8 0"/>
+        <path d="M3 25c3-3.4 6-3.4 9 0s6 3.4 9 0 5-3.4 8 0"/>
+      </svg>
+    </span>
+    <div>
+      <h1>pgsqlmesh</h1>
+      <p class="subtitle">Postgres · SQLMesh · Superset</p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <span id="stack-status" class="stack-status" title="Tjansternas driftstatus"></span>
+    <button id="refresh-btn" class="btn" title="Uppdatera oversikten">↻</button>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="overview" role="tab">Översikt</button>
+  <button class="tab" data-tab="security" role="tab">Versioner &amp; säkerhet</button>
+  <button class="tab" data-tab="data" role="tab">Data</button>
+  <button class="tab" data-tab="superset" role="tab">Superset</button>
+</nav>
+
+<main>
+  <!-- ============================ ÖVERSIKT ============================ -->
+  <section id="tab-overview" class="tab-panel active">
+    <section class="pipeline" aria-label="Dataflöde">
+      <div class="pipe-node">
+        <span class="pipe-badge">1</span>
+        <strong>PostgreSQL</strong>
+        <small>Datalager</small>
+      </div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-node">
+        <span class="pipe-badge">2</span>
+        <strong>SQLMesh</strong>
+        <small>Transform</small>
+      </div>
+      <span class="pipe-arrow">→</span>
+      <div class="pipe-node">
+        <span class="pipe-badge">3</span>
+        <strong>Superset</strong>
+        <small>BI &amp; dashboards</small>
+      </div>
+    </section>
+
+    <h2 class="panel-title">Tjänster</h2>
+    <section id="services" class="services"></section>
+
+    <h2 class="panel-title">Datalager</h2>
+    <section id="warehouse" class="warehouse"></section>
+  </section>
+
+  <!-- ======================= VERSIONER & SÄKERHET ====================== -->
+  <section id="tab-security" class="tab-panel">
+    <div class="security-head">
+      <div>
+        <h2 class="panel-title">Versioner &amp; säkerhetsrisker</h2>
+        <p class="panel-lead">Kontrollerar senaste versioner och skannar efter kända
+           sårbarheter (CVE). Föreslår åtgärder och kan utföra uppdateringarna.</p>
+      </div>
+      <button id="check-btn" class="btn btn-primary">
+        <span class="btn-icon">⟳</span> Kontrollera versioner
+      </button>
+    </div>
+
+    <section id="summary" class="summary hidden"></section>
+    <section id="cards" class="cards"></section>
+
+    <section id="empty" class="empty">
+      <p>Tryck på <strong>Kontrollera versioner</strong> för att hämta senaste versioner
+         och skanna efter kända säkerhetsrisker.</p>
+    </section>
+  </section>
+
+  <!-- ============================== DATA ============================== -->
+  <section id="tab-data" class="tab-panel">
+    <div class="security-head">
+      <div>
+        <h2 class="panel-title">Datalager</h2>
+        <p class="panel-lead">Tabeller i <code>raw.*</code> (rådata) och
+           <code>analytics.*</code> (byggs av SQLMesh). Klicka på en tabell för att se rader.</p>
+      </div>
+      <button id="data-refresh" class="btn">↻ Uppdatera</button>
+    </div>
+    <section id="data-tables" class="data-tables"></section>
+  </section>
+
+  <!-- ============================ SUPERSET ============================ -->
+  <section id="tab-superset" class="tab-panel">
+    <div class="security-head">
+      <div>
+        <h2 class="panel-title">Apache Superset</h2>
+        <p class="panel-lead">BI-lagret körs som en egen tjänst. Öppna det i en ny flik.</p>
+      </div>
+      <a id="superset-open" class="btn btn-primary" target="_blank" rel="noopener">
+        Öppna Superset ↗
+      </a>
+    </div>
+
+    <section class="superset-info">
+      <div class="info-card">
+        <h3>Inloggning</h3>
+        <p><span class="k">Användare</span> <code id="ss-user">admin</code></p>
+        <p><span class="k">Lösenord</span> <code id="ss-pass">admin</code></p>
+      </div>
+      <div class="info-card">
+        <h3>Förberett innehåll</h3>
+        <ul>
+          <li>Databas <code>pgsqlmesh warehouse</code></li>
+          <li>Dataset <code>analytics.fct_daily_sales</code></li>
+          <li>Dataset <code>analytics.dim_customers</code></li>
+          <li>Dashboard <strong>pgsqlmesh Analytics</strong></li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Om inbäddning</h3>
+        <p>Superset blockerar inbäddning i iframe av säkerhetsskäl
+           (<code>X-Frame-Options</code>). Använd knappen ovan – den öppnar
+           Superset i en ny flik.</p>
+      </div>
+    </section>
+  </section>
+</main>
+
+<!-- Dialog för tabellvisning -->
+<dialog id="table-dialog" class="dialog dialog-wide">
+  <h2 id="table-title">Tabell</h2>
+  <div id="table-meta" class="table-meta"></div>
+  <div id="table-wrap" class="table-wrap"></div>
+  <div class="dialog-actions">
+    <button id="table-close" class="btn">Stäng</button>
+  </div>
+</dialog>
+
+<!-- Dialog för uppdatering -->
+<dialog id="upgrade-dialog" class="dialog">
+  <h2 id="dialog-title">Uppdaterar ...</h2>
+  <pre id="dialog-log" class="log"></pre>
+  <div class="dialog-actions">
+    <button id="dialog-close" class="btn" disabled>Stäng</button>
+  </div>
+</dialog>
+
+<footer class="footer">
+  <p>pgsqlmesh – dataplattform med Postgres, SQLMesh och Superset.
+     Gränssnittet följer Havs- och vattenmyndighetens grafiska profil
+     (färgpalett, TT Norms/Arial och vattenmotiv).</p>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
